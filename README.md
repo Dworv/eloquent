@@ -1,2 +1,2 @@
 # eloquent
-A project with the goal of creating a practical keyboard layout.
+Goal: a practical keyboard layout for practicle people.
