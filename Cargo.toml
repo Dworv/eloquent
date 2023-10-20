@@ -1,5 +1,5 @@
 [workspace]
-members = ["keyboard"]
+members = ["speedtest"]
 resolver = "2"
 
 # Enable only a small amount of optimization in debug mode
