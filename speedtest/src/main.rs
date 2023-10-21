@@ -1,12 +1,13 @@
 use bevy::prelude::*;
-
-use speedtest::{add_key, root_ui, row_container_ui, Key};
+use rand::{thread_rng, Rng};
+use speedtest::*;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_systems(Startup, (setup_camera, setup_keyboard))
-        .add_systems(Update, highlight_key)
+        .add_event::<NewTest>()
+        .add_systems(Startup, (setup_camera, setup_keyboard, setup_tests))
+        .add_systems(Update, (choose_next_test, update_key_backgrounds).chain())
         .run();
 }
 
@@ -62,14 +63,36 @@ fn setup_keyboard(mut commands: Commands, asset_server: Res<AssetServer>) {
     });
 }
 
-fn highlight_key(mut query: Query<(&mut BackgroundColor, &Key)>, input: Res<Input<KeyCode>>) {
-    for (mut color, key) in &mut query {
-        if input.just_pressed(key.keycode) {
-            println!("key pressed: {:?}", key.keycode);
-            color.0 = Color::rgb(0.5, 0.2, 0.5);
-        }
-        if input.just_released(key.keycode) {
-            color.0 = Color::rgb(0.2, 0.2, 0.5);
+fn setup_tests(mut commands: Commands, mut ev_new_test: EventWriter<NewTest>) {
+    commands.insert_resource(RemainingTests::default());
+    commands.init_resource::<CurrentTest>();
+    ev_new_test.send(NewTest);
+}
+
+fn choose_next_test(mut ev_new_test: EventReader<NewTest>, mut remaining_tests: ResMut<RemainingTests>, mut current_test: ResMut<CurrentTest>) {
+    for _ in &mut ev_new_test {
+        let old_len = remaining_tests.0.len();
+        let next_test = thread_rng().gen_range(0..old_len);
+        *current_test = CurrentTest(Some(remaining_tests.0.get(next_test).unwrap().clone()));
+        *remaining_tests = {
+            let mut start = remaining_tests.0[0..next_test].to_vec();
+            let mut end = remaining_tests.0[(next_test + 1)..old_len].to_vec();
+            start.append(&mut end);
+            RemainingTests(start)
+        };
+        println!("current test: {:?}", current_test.0.as_ref().unwrap().home_key());
+    }
+}
+
+fn update_key_backgrounds(mut ev_new_test: EventReader<NewTest>, mut query: Query<(&mut BackgroundColor, &Key)>, current_test: Res<CurrentTest>) {
+    let highlighted_keys = current_test.0.as_ref().unwrap().keys();
+    for _ in &mut ev_new_test {
+        for (mut bg, key) in &mut query {
+            if highlighted_keys.contains(&key.keycode) {
+                *bg = ACTIVE_KEY_COLOR;
+            } else {
+                *bg = INACTIVE_KEY_COLOR;
+            }
         }
     }
 }
