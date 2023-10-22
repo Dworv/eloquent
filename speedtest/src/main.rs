@@ -6,8 +6,17 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .add_event::<NewTest>()
+        .add_event::<NewSubTest>()
         .add_systems(Startup, (setup_camera, setup_keyboard, setup_tests))
-        .add_systems(Update, (choose_next_test, update_key_backgrounds).chain())
+        .add_systems(
+            Update,
+            (
+                choose_next_test,
+                update_key_backgrounds,
+                choose_next_subtest,
+                handle_key_presses.run_if(resource_exists::<CurrentSubTest>())
+            ).chain(),
+        )
         .run();
 }
 
@@ -69,7 +78,12 @@ fn setup_tests(mut commands: Commands, mut ev_new_test: EventWriter<NewTest>) {
     ev_new_test.send(NewTest);
 }
 
-fn choose_next_test(mut ev_new_test: EventReader<NewTest>, mut remaining_tests: ResMut<RemainingTests>, mut current_test: ResMut<CurrentTest>) {
+fn choose_next_test(
+    mut ev_new_test: EventReader<NewTest>,
+    mut ev_new_subtest: EventWriter<NewSubTest>,
+    mut remaining_tests: ResMut<RemainingTests>,
+    mut current_test: ResMut<CurrentTest>,
+) {
     for _ in &mut ev_new_test {
         let old_len = remaining_tests.0.len();
         let next_test = thread_rng().gen_range(0..old_len);
@@ -80,11 +94,15 @@ fn choose_next_test(mut ev_new_test: EventReader<NewTest>, mut remaining_tests: 
             start.append(&mut end);
             RemainingTests(start)
         };
-        println!("current test: {:?}", current_test.0.as_ref().unwrap().home_key());
+        ev_new_subtest.send(NewSubTest(1));
     }
 }
 
-fn update_key_backgrounds(mut ev_new_test: EventReader<NewTest>, mut query: Query<(&mut BackgroundColor, &Key)>, current_test: Res<CurrentTest>) {
+fn update_key_backgrounds(
+    mut ev_new_test: EventReader<NewTest>,
+    mut query: Query<(&mut BackgroundColor, &Key)>,
+    current_test: Res<CurrentTest>,
+) {
     let highlighted_keys = current_test.0.as_ref().unwrap().keys();
     for _ in &mut ev_new_test {
         for (mut bg, key) in &mut query {
@@ -96,3 +114,86 @@ fn update_key_backgrounds(mut ev_new_test: EventReader<NewTest>, mut query: Quer
         }
     }
 }
+
+fn choose_next_subtest(
+    mut commands: Commands,
+    mut ev_new_subtest: EventReader<NewSubTest>,
+    test: Res<CurrentTest>,
+    mut query: Query<(&mut BackgroundColor, &Key)>,
+) {
+    for num in &mut ev_new_subtest {
+        let num = num.0;
+        let test = test.0.as_ref().unwrap();
+        let key_candidates = test.keys();
+        let num_keys = key_candidates.len();
+        let key1 = key_candidates[thread_rng().gen_range(0..num_keys)];
+        let key2 = key_candidates[thread_rng().gen_range(0..num_keys)];
+        commands.insert_resource(dbg!(CurrentSubTest {
+            num,
+            start: key1.clone(),
+            end: key2,
+            stage: SubTestStage::Preparing,
+            start_time: 0.,
+            wait_time: thread_rng().gen_range(1.0..3.0),
+        }));
+        for (mut bg, key) in &mut query {
+            if key.keycode == key1 {
+                dbg!(key.keycode, key1);
+                *bg = PREP_KEY_COLOR;
+            }
+        } 
+    } 
+}
+
+fn handle_key_presses(
+    input: Res<Input<KeyCode>>,
+    time: Res<Time>,
+    mut subtest: ResMut<CurrentSubTest>,
+    test: Res<CurrentTest>,
+    mut query: Query<(&mut BackgroundColor, &mut ReactionTimes, &Key)>,
+    mut ev_new_subtest: EventWriter<NewSubTest>,
+    mut ev_new_test: EventWriter<NewTest>
+) {
+    // dbg!(&subtest);
+    match subtest.stage {
+        SubTestStage::Preparing => {
+            if input.just_pressed(subtest.start) {
+                subtest.stage = SubTestStage::Waiting;
+                subtest.start_time = time.elapsed_seconds_f64();
+            }
+        },
+        SubTestStage::Waiting => {
+            if time.elapsed_seconds_f64() - subtest.start_time > subtest.wait_time {
+                subtest.stage = SubTestStage::Testing;
+                subtest.start_time = time.elapsed_seconds_f64();
+                for (mut bg, _, key) in &mut query {
+                    if key.keycode == subtest.end {
+                        *bg = PRESS_KEY_COLOR;
+                    }
+                }
+            }
+        },
+        SubTestStage::Testing => {
+            if input.just_pressed(subtest.end) {
+                let elapsed = time.elapsed_seconds_f64() - subtest.start_time;
+                println!("time {:?} -> {:?}: {}s", subtest.start, subtest.end, elapsed);
+                for (mut bg, mut reaction_times, key) in &mut query {
+                    if key.keycode == subtest.start {
+                        *bg = ACTIVE_KEY_COLOR;
+                        reaction_times.times.entry(subtest.end).or_insert_with(Vec::new).push(elapsed);
+                        println!("reaction times: {:?}", reaction_times.times);
+                    }
+                    if key.keycode == subtest.end {
+                        *bg = ACTIVE_KEY_COLOR;
+                    }
+                }
+                if subtest.num == test.0.as_ref().unwrap().num_tests() {
+                    ev_new_test.send(NewTest);
+                } else {
+                    ev_new_subtest.send(NewSubTest(subtest.num + 1));
+                }
+            }
+        },
+    }
+}
+

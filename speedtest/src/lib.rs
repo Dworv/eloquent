@@ -1,7 +1,32 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, utils::HashMap};
 
-pub const INACTIVE_KEY_COLOR: BackgroundColor = BackgroundColor(Color::Rgba { red: 0.3, green: 0.3, blue: 0.3, alpha: 1.0 });
-pub const ACTIVE_KEY_COLOR: BackgroundColor = BackgroundColor(Color::Rgba { red: 0.2, green: 0.2, blue: 0.5, alpha: 1.0 });
+pub const INACTIVE_KEY_COLOR: BackgroundColor = BackgroundColor(Color::Rgba {
+    red: 0.3,
+    green: 0.3,
+    blue: 0.3,
+    alpha: 1.0,
+});
+
+pub const ACTIVE_KEY_COLOR: BackgroundColor = BackgroundColor(Color::Rgba {
+    red: 0.2,
+    green: 0.2,
+    blue: 0.5,
+    alpha: 1.0,
+});
+
+pub const PREP_KEY_COLOR: BackgroundColor = BackgroundColor(Color::Rgba {
+    red: 0.2,
+    green: 0.5,
+    blue: 0.2,
+    alpha: 1.0,
+});
+
+pub const PRESS_KEY_COLOR: BackgroundColor = BackgroundColor(Color::Rgba {
+    red: 0.5,
+    green: 0.2,
+    blue: 0.5,
+    alpha: 1.0,
+});
 
 pub fn root_ui() -> NodeBundle {
     NodeBundle {
@@ -53,6 +78,9 @@ pub fn add_key(builder: &mut ChildBuilder, key: char, font: Handle<Font>) {
             Key {
                 keycode: char_to_keycode(key),
             },
+            ReactionTimes {
+                times: HashMap::default(),
+            }
         ))
         .with_children(|parent| {
             parent.spawn(
@@ -72,6 +100,11 @@ pub fn add_key(builder: &mut ChildBuilder, key: char, font: Handle<Font>) {
 #[derive(Component)]
 pub struct Key {
     pub keycode: KeyCode,
+}
+
+#[derive(Component)]
+pub struct ReactionTimes {
+    pub times: HashMap<KeyCode, Vec<f64>>,
 }
 
 pub fn char_to_keycode(c: char) -> KeyCode {
@@ -106,7 +139,7 @@ pub fn char_to_keycode(c: char) -> KeyCode {
         ',' => KeyCode::Comma,
         '.' => KeyCode::Period,
         '/' => KeyCode::Slash,
-        _ => panic!("no keycode???? :O")
+        _ => panic!("no keycode???? :O"),
     }
 }
 
@@ -152,6 +185,11 @@ impl Speedtest {
             RightPinky => vec![P, Semicolon, Slash],
         }
     }
+
+    pub fn num_tests(&self) -> usize {
+        // self.keys().len() * 2
+        2
+    }
 }
 
 #[derive(Default, Resource)]
@@ -178,3 +216,23 @@ impl Default for RemainingTests {
 
 #[derive(Event)]
 pub struct NewTest;
+
+#[derive(Event)]
+pub struct NewSubTest(pub usize);
+
+#[derive(Debug, Resource)]
+pub struct CurrentSubTest {
+    pub num: usize,
+    pub start: KeyCode,
+    pub end: KeyCode,
+    pub stage: SubTestStage,
+    pub start_time: f64,
+    pub wait_time: f64,
+}
+
+#[derive(Debug, Reflect)]
+pub enum SubTestStage {
+    Preparing,
+    Waiting,
+    Testing
+}
