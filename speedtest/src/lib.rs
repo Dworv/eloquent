@@ -1,3 +1,5 @@
+use std::fmt::{Display, Formatter};
+
 use bevy::{prelude::*, utils::HashMap};
 
 pub const INACTIVE_KEY_COLOR: BackgroundColor = BackgroundColor(Color::Rgba {
@@ -100,6 +102,45 @@ pub fn add_key(builder: &mut ChildBuilder, key: char, font: Handle<Font>) {
 #[derive(Component)]
 pub struct Key {
     pub keycode: KeyCode,
+}
+
+impl Key {
+    pub fn to_string(&self) -> String {
+        match self.keycode {
+            KeyCode::A => "A",
+            KeyCode::B => "B",
+            KeyCode::C => "C",
+            KeyCode::D => "D",
+            KeyCode::E => "E",
+            KeyCode::F => "F",
+            KeyCode::G => "G",
+            KeyCode::H => "H",
+            KeyCode::I => "I",
+            KeyCode::J => "J",
+            KeyCode::K => "K",
+            KeyCode::L => "L",
+            KeyCode::M => "M",
+            KeyCode::N => "N",
+            KeyCode::O => "O",
+            KeyCode::P => "P",
+            KeyCode::Q => "Q",
+            KeyCode::R => "R",
+            KeyCode::S => "S",
+            KeyCode::T => "T",
+            KeyCode::U => "U",
+            KeyCode::V => "V",
+            KeyCode::W => "W",
+            KeyCode::X => "X",
+            KeyCode::Y => "Y",
+            KeyCode::Z => "Z",
+            KeyCode::Semicolon => ";",
+            KeyCode::Comma => ",",
+            KeyCode::Period => ".",
+            KeyCode::Slash => "/",
+            _ => panic!("no keycode???? :O"),
+        }
+        .to_string()
+    }
 }
 
 #[derive(Component)]

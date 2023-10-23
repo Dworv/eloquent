@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 use rand::{thread_rng, Rng};
+use serde_json::json;
 use speedtest::*;
 
 fn main() {
@@ -83,9 +84,18 @@ fn choose_next_test(
     mut ev_new_subtest: EventWriter<NewSubTest>,
     mut remaining_tests: ResMut<RemainingTests>,
     mut current_test: ResMut<CurrentTest>,
+    query: Query<(&Key, &ReactionTimes)>,
 ) {
     for _ in &mut ev_new_test {
         let old_len = remaining_tests.0.len();
+        if old_len == 0 {
+            let mut reaction_map = serde_json::Map::new();
+            for (key, times) in query.iter() {
+                reaction_map.insert(key.to_string(), json!(times.times));
+            }
+            println!("map: {:?}", reaction_map);
+            std::process::exit(0);
+        }
         let next_test = thread_rng().gen_range(0..old_len);
         *current_test = CurrentTest(Some(remaining_tests.0.get(next_test).unwrap().clone()));
         *remaining_tests = {
