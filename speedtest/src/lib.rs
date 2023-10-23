@@ -97,7 +97,7 @@ pub fn add_key(builder: &mut ChildBuilder, key: char, font: Handle<Font>) {
         });
 }
 
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct Key {
     pub keycode: KeyCode,
 }

@@ -1,3 +1,5 @@
+use std::fs::{File, OpenOptions};
+
 use bevy::prelude::*;
 use rand::{thread_rng, Rng};
 use serde_json::{json, Value};
@@ -89,11 +91,13 @@ fn choose_next_test(
     for _ in &mut ev_new_test {
         let old_len = remaining_tests.0.len();
         if old_len == 0 {
-            let mut reaction_map = serde_json::Map::new();
-            for (key, times) in query.iter() {
-                reaction_map.insert(key.to_string(), json!(times.times));
+            let mut old_val: Value = serde_json::from_reader(File::open("speeds.json").unwrap()).unwrap();
+            if let Value::Object(old_map) = &mut old_val {
+                for (key, times) in query.iter() {
+                    old_map.insert(key.to_string(), json!(times.times));
+                }
             }
-            println!("{}", serde_json::to_string_pretty(&Value::Object(reaction_map)).unwrap());
+            serde_json::to_writer_pretty(OpenOptions::new().write(true).open("speeds.json").unwrap(), &old_val).unwrap();
             std::process::exit(0);
         }
         let next_test = thread_rng().gen_range(0..old_len);
