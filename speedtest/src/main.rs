@@ -91,10 +91,22 @@ fn choose_next_test(
     for _ in &mut ev_new_test {
         let old_len = remaining_tests.0.len();
         if old_len == 0 {
-            let mut old_val: Value = serde_json::from_reader(File::open("speeds.json").unwrap()).unwrap();
-            if let Value::Object(old_map) = &mut old_val {
-                for (key, times) in query.iter() {
-                    old_map.insert(key.to_string(), json!(times.times));
+            let mut old_val: Value = serde_json::from_reader(File::open("speeds.json").unwrap()).unwrap(); // whole file
+            if let Value::Object(old_map) = &mut old_val { // whole map
+                for (key, local_end_times) in query.iter() { // start key, all ends
+                    dbg!(key.to_string());
+                    let ends_val = old_map.get_mut(&key.to_string()).unwrap(); 
+                    if let Value::Object(ends_map) = ends_val {
+                        for (end_key, local_times) in local_end_times.times.iter() {
+                            if let Some(saved_end_times) = ends_map.get_mut(&key.to_string()) {
+                                if let Value::Array(saved_end_times) = saved_end_times {
+                                    saved_end_times.extend(local_times.iter().map(|x| json!(x)));
+                                }
+                            } else {
+                                ends_map.insert(Key {keycode: end_key.clone()}.to_string(), json!(local_times));
+                            }
+                        }
+                    }
                 }
             }
             serde_json::to_writer_pretty(OpenOptions::new().write(true).open("speeds.json").unwrap(), &old_val).unwrap();

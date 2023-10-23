@@ -226,8 +226,7 @@ impl Speedtest {
     }
 
     pub fn num_tests(&self) -> usize {
-        // self.keys().len() * 2
-        2
+        self.keys().len()
     }
 }
 
