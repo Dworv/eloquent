@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use rand::{thread_rng, Rng};
-use serde_json::json;
+use serde_json::{json, Value};
 use speedtest::*;
 
 fn main() {
@@ -93,7 +93,7 @@ fn choose_next_test(
             for (key, times) in query.iter() {
                 reaction_map.insert(key.to_string(), json!(times.times));
             }
-            println!("map: {:?}", reaction_map);
+            println!("{}", serde_json::to_string_pretty(&Value::Object(reaction_map)).unwrap());
             std::process::exit(0);
         }
         let next_test = thread_rng().gen_range(0..old_len);
@@ -138,17 +138,16 @@ fn choose_next_subtest(
         let num_keys = key_candidates.len();
         let key1 = key_candidates[thread_rng().gen_range(0..num_keys)];
         let key2 = key_candidates[thread_rng().gen_range(0..num_keys)];
-        commands.insert_resource(dbg!(CurrentSubTest {
+        commands.insert_resource(CurrentSubTest {
             num,
             start: key1.clone(),
             end: key2,
             stage: SubTestStage::Preparing,
             start_time: 0.,
             wait_time: thread_rng().gen_range(1.0..3.0),
-        }));
+        });
         for (mut bg, key) in &mut query {
             if key.keycode == key1 {
-                dbg!(key.keycode, key1);
                 *bg = PREP_KEY_COLOR;
             }
         } 
@@ -186,12 +185,10 @@ fn handle_key_presses(
         SubTestStage::Testing => {
             if input.just_pressed(subtest.end) {
                 let elapsed = time.elapsed_seconds_f64() - subtest.start_time;
-                println!("time {:?} -> {:?}: {}s", subtest.start, subtest.end, elapsed);
                 for (mut bg, mut reaction_times, key) in &mut query {
                     if key.keycode == subtest.start {
                         *bg = ACTIVE_KEY_COLOR;
                         reaction_times.times.entry(subtest.end).or_insert_with(Vec::new).push(elapsed);
-                        println!("reaction times: {:?}", reaction_times.times);
                     }
                     if key.keycode == subtest.end {
                         *bg = ACTIVE_KEY_COLOR;

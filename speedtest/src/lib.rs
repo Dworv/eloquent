@@ -1,5 +1,3 @@
-use std::fmt::{Display, Formatter};
-
 use bevy::{prelude::*, utils::HashMap};
 
 pub const INACTIVE_KEY_COLOR: BackgroundColor = BackgroundColor(Color::Rgba {
