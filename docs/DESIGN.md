@@ -16,4 +16,5 @@ I will continue to work on this test until I have some strong data to help me cr
 After finishing the test, I realize that I approached it the wrong way. The test currently works by having the player hover their finger over the start key and then moving it to the end key when it turns purple. However, this is 
 1. Boring as hell
 2. Judges reaction time instead of finger speed.
+
 In the coming weeks, I will rewrite the test to have the results better represent the finger speed of the user.
