@@ -70,19 +70,17 @@ pub fn row_container_ui(offset: Val) -> NodeBundle {
 
 pub fn add_key(builder: &mut ChildBuilder, key: char, font: Handle<Font>) {
     builder
-        .spawn(
-            NodeBundle {
-                style: Style {
-                    height: Val::Percent(100.),
-                    aspect_ratio: Some(1.),
-                    align_items: AlignItems::Center,
-                    justify_content: JustifyContent::Center,
-                    ..Default::default()
-                },
-                background_color: NORMAL_KEY_COLOR,
+        .spawn(NodeBundle {
+            style: Style {
+                height: Val::Percent(100.),
+                aspect_ratio: Some(1.),
+                align_items: AlignItems::Center,
+                justify_content: JustifyContent::Center,
                 ..Default::default()
-            }
-        )
+            },
+            background_color: NORMAL_KEY_COLOR,
+            ..Default::default()
+        })
         .with_children(|parent| {
             parent.spawn(
                 TextBundle::from_section(
@@ -97,4 +95,3 @@ pub fn add_key(builder: &mut ChildBuilder, key: char, font: Handle<Font>) {
             );
         });
 }
-
