@@ -13,7 +13,6 @@ impl Plugin for InstructionsPlugin {
 struct InstructionsUi;
 
 fn setup_ui(mut commands: Commands) {
-    println!("hi");
     commands.spawn((
         InstructionsUi,
         NodeBundle {
@@ -28,7 +27,12 @@ fn setup_ui(mut commands: Commands) {
             background_color: BACKGROUND_COLOR,
             ..default()
         },
-    ));
+    )).with_children(|parent| {
+        parent.spawn(TextBundle::from_section("Instructions", TextStyle {
+            font_size: 60.,
+            ..default()
+        }));
+    });
 }
 
 fn handle_ui_events(
