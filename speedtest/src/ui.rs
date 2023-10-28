@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+use crate::Key;
+
 pub const BACKGROUND_COLOR: BackgroundColor = BackgroundColor(Color::Rgba {
     red: 0.1,
     green: 0.1,
@@ -35,21 +37,6 @@ pub const END_KEY_COLOR: BackgroundColor = BackgroundColor(Color::Rgba {
     alpha: 1.0,
 });
 
-pub fn root_ui() -> NodeBundle {
-    NodeBundle {
-        style: Style {
-            width: Val::Percent(100.),
-            height: Val::Percent(100.),
-            flex_direction: FlexDirection::Column,
-            align_items: AlignItems::Center,
-            justify_content: JustifyContent::Center,
-            ..Default::default()
-        },
-        background_color: Color::rgb(0.1, 0.1, 0.1).into(),
-        ..Default::default()
-    }
-}
-
 pub fn row_container_ui(offset: Val) -> NodeBundle {
     NodeBundle {
         style: Style {
@@ -68,7 +55,7 @@ pub fn row_container_ui(offset: Val) -> NodeBundle {
     }
 }
 
-pub fn add_key(builder: &mut ChildBuilder, key: char, font: Handle<Font>) {
+pub fn add_key(builder: &mut ChildBuilder, key: Key) {
     builder
         .spawn(NodeBundle {
             style: Style {
@@ -84,11 +71,11 @@ pub fn add_key(builder: &mut ChildBuilder, key: char, font: Handle<Font>) {
         .with_children(|parent| {
             parent.spawn(
                 TextBundle::from_section(
-                    key,
+                    char::from(key),
                     TextStyle {
-                        font,
                         font_size: 40.0,
                         color: Color::rgb(0.9, 0.9, 0.9),
+                        ..default()
                     },
                 )
                 .with_text_alignment(TextAlignment::Center),
