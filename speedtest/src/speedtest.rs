@@ -1,10 +1,10 @@
-use bevy::{prelude::*, render::color};
+use bevy::prelude::*;
 use rand::{seq::SliceRandom, thread_rng};
 
 use crate::{
     ui::{
         add_key, row_container_ui, ACTIVE_KEY_COLOR, BACKGROUND_COLOR, END_KEY_COLOR,
-        START_KEY_COLOR, NORMAL_KEY_COLOR,
+        NORMAL_KEY_COLOR, START_KEY_COLOR,
     },
     AppState, Finger, Key,
 };
@@ -15,7 +15,16 @@ impl Plugin for TestPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<NextTest>()
             .add_systems(OnEnter(AppState::Test), (setup_ui, activate_first_test))
-            .add_systems(Update, (color_start_key, color_end_key, color_active_keys, color_normal_keys).run_if(in_state(AppState::Test)))
+            .add_systems(
+                Update,
+                (
+                    color_start_key,
+                    color_end_key,
+                    color_active_keys,
+                    color_normal_keys,
+                )
+                    .run_if(in_state(AppState::Test)),
+            )
             .add_systems(
                 Update,
                 (clear_old_test, choose_new_test)
@@ -116,7 +125,7 @@ fn setup_ui(mut commands: Commands) {
         });
 }
 
-fn color_start_key(mut  start: Query<&mut BackgroundColor, With<StartKey>>) {
+fn color_start_key(mut start: Query<&mut BackgroundColor, With<StartKey>>) {
     for mut color in &mut start {
         *color = START_KEY_COLOR;
     }
@@ -137,7 +146,12 @@ fn color_active_keys(mut active: Query<&mut BackgroundColor, With<ActiveKey>>) {
 fn color_normal_keys(
     mut normal: Query<
         &mut BackgroundColor,
-        (With<Key>, Without<StartKey>, Without<EndKey>, Without<ActiveKey>),
+        (
+            With<Key>,
+            Without<StartKey>,
+            Without<EndKey>,
+            Without<ActiveKey>,
+        ),
     >,
 ) {
     for mut color in &mut normal {
