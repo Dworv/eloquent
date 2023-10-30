@@ -1,5 +1,8 @@
+use std::{fs::OpenOptions, time::{Instant, SystemTime, UNIX_EPOCH}};
+
 use bevy::prelude::*;
 use rand::{seq::SliceRandom, thread_rng};
+use serde::Serialize;
 
 use crate::{
     ui::{
@@ -14,7 +17,8 @@ pub struct TestPlugin;
 impl Plugin for TestPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<NextTest>()
-            .add_systems(OnEnter(AppState::Test), (setup_ui, activate_first_test))
+            .add_state::<TestState>()
+            .add_systems(OnEnter(AppState::Test), (setup_ui, activate_first_test, init_res))
             .add_systems(
                 Update,
                 (
@@ -27,11 +31,29 @@ impl Plugin for TestPlugin {
             )
             .add_systems(
                 Update,
-                (clear_old_test, choose_new_test)
+                (
+                    handle_start.run_if(in_state(TestState::Waiting)),
+                    handle_lift.run_if(in_state(TestState::Started)),
+                    handle_finish.run_if(in_state(TestState::Moving))
+                )
+                    .run_if(in_state(AppState::Test)),
+            )
+            .add_systems(
+                Update,
+                (log_test, remaining_check, clear_old_test, choose_new_test)
                     .chain()
                     .run_if(on_event::<NextTest>()),
-            );
+            )
+            .add_systems(OnExit(AppState::Test), cleanup_test);
     }
+}
+
+#[derive(Clone, Debug, Default, Eq, Hash, PartialEq, States)]
+pub enum TestState {
+    #[default]
+    Waiting,
+    Started,
+    Moving,
 }
 
 #[derive(Component)]
@@ -47,11 +69,15 @@ struct StartKey;
 struct EndKey;
 
 #[derive(Resource)]
-struct TestsRemaining(pub u32);
+struct TestsRemaining(pub i32);
 
 #[derive(Resource)]
 struct TestLogs(pub Vec<TestLog>);
 
+#[derive(Resource)]
+struct LiftTime(f64);
+
+#[derive(Debug, Serialize)]
 struct TestLog {
     start: Key,
     end: Key,
@@ -60,6 +86,12 @@ struct TestLog {
 
 #[derive(Event)]
 struct NextTest;
+
+fn init_res(mut commands: Commands) {
+    commands.insert_resource(TestsRemaining(50));
+    commands.insert_resource(TestLogs(Vec::new()));
+    commands.insert_resource(LiftTime(0.));
+}
 
 fn setup_ui(mut commands: Commands) {
     use KeyCode::*;
@@ -125,15 +157,21 @@ fn setup_ui(mut commands: Commands) {
         });
 }
 
-fn color_start_key(mut start: Query<&mut BackgroundColor, With<StartKey>>) {
+fn color_start_key(mut start: Query<&mut BackgroundColor, With<StartKey>>, state: Res<State<TestState>>) {
     for mut color in &mut start {
-        *color = START_KEY_COLOR;
+        *color = match **state {
+            TestState::Waiting | TestState::Started => START_KEY_COLOR,
+            TestState::Moving => ACTIVE_KEY_COLOR,
+        }
     }
 }
 
-fn color_end_key(mut end: Query<&mut BackgroundColor, With<EndKey>>) {
+fn color_end_key(mut end: Query<&mut BackgroundColor, With<EndKey>>, state: Res<State<TestState>>) {
     for mut color in &mut end {
-        *color = END_KEY_COLOR;
+        *color = match **state {
+            TestState::Waiting => ACTIVE_KEY_COLOR,
+            TestState::Started | TestState::Moving => END_KEY_COLOR,
+        }
     }
 }
 
@@ -159,8 +197,68 @@ fn color_normal_keys(
     }
 }
 
+fn handle_start(
+    input: Res<Input<KeyCode>>,
+    mut next_state: ResMut<NextState<TestState>>,
+    start_key: Query<&Key, With<StartKey>>,
+) {
+    for start in &start_key {
+        if input.just_pressed(start.0) {
+            *next_state = NextState(Some(TestState::Started));
+        }
+    }
+}
+
+fn handle_lift(
+    input: Res<Input<KeyCode>>,
+    mut next_state: ResMut<NextState<TestState>>,
+    start_key: Query<&Key, With<StartKey>>,
+    mut start_time: ResMut<LiftTime>,
+    time: Res<Time>,
+) {
+    for start in &start_key {
+        if input.just_released(start.0) {
+            start_time.0 = time.elapsed_seconds_f64();
+            *next_state = NextState(Some(TestState::Moving));
+        }
+    }
+}
+
+fn handle_finish(
+    input: Res<Input<KeyCode>>,
+    mut next_state: ResMut<NextState<TestState>>,
+    end_key: Query<&Key, With<EndKey>>,
+    mut ev: EventWriter<NextTest>,
+) {
+    for end in &end_key {
+        if input.just_pressed(end.0) {
+            *next_state = NextState(Some(TestState::Waiting));
+            ev.send(NextTest);
+        }
+    }
+}
+
 fn activate_first_test(mut ev: EventWriter<NextTest>) {
     ev.send(NextTest);
+}
+
+fn log_test(
+    mut test_logs: ResMut<TestLogs>,
+    start_key: Query<&Key, With<StartKey>>,
+    end_key: Query<&Key, With<EndKey>>,
+    start_time: Res<LiftTime>,
+    time: Res<Time>,
+) {
+    for start in &start_key {
+        for end in &end_key {
+            let time = time.elapsed_seconds_f64() - start_time.0;
+            test_logs.0.push(TestLog {
+                start: start.clone(),
+                end: end.clone(),
+                time,
+            });
+        }
+    }
 }
 
 fn clear_old_test(
@@ -176,6 +274,19 @@ fn clear_old_test(
             .remove::<EndKey>()
             .remove::<ActiveKey>();
     }
+}
+
+fn remaining_check(
+    mut tests_remaining: ResMut<TestsRemaining>,
+    mut next_state: ResMut<NextState<AppState>>,
+    log: Res<TestLogs>,
+) {
+    if tests_remaining.0 == 0 {
+        let file = OpenOptions::new().create(true).write(true).open(format!("speedtest-{}.json", SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs())).unwrap();
+        serde_json::to_writer_pretty(file, &log.0).unwrap();
+        *next_state = NextState(Some(AppState::Results));
+    }
+    tests_remaining.0 -= 1;
 }
 
 fn choose_new_test(mut commands: Commands, mut keys: Query<(Entity, &Key)>) {
@@ -195,5 +306,11 @@ fn choose_new_test(mut commands: Commands, mut keys: Query<(Entity, &Key)>) {
         if actives.contains(key) {
             commands.entity(entity).insert(ActiveKey);
         }
+    }
+}
+
+fn cleanup_test(mut commands: Commands, query: Query<Entity, With<TestUi>>) {
+    for entity in query.iter() {
+        commands.entity(entity).despawn_recursive();
     }
 }

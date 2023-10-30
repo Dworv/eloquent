@@ -4,6 +4,7 @@ pub mod ui;
 
 use bevy::prelude::*;
 use rand::Rng;
+use serde::Serialize;
 
 #[derive(Clone, Debug, Default, Eq, Hash, PartialEq, States)]
 pub enum AppState {
@@ -13,7 +14,7 @@ pub enum AppState {
     Results,
 }
 
-#[derive(Component, Debug, PartialEq)]
+#[derive(Clone, Component, Debug, PartialEq)]
 pub struct Key(KeyCode);
 
 impl From<&Key> for char {
@@ -52,6 +53,14 @@ impl From<&Key> for char {
             Slash => '/',
             _ => panic!("invalid key"),
         }
+    }
+}
+
+impl Serialize for Key {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer {
+        serializer.serialize_char(char::from(self))
     }
 }
 
