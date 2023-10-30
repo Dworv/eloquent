@@ -8,7 +8,7 @@ Problem statement: Qwerty is a very unoptimized keyboard layout. By creating a b
 ### 2023/10/20
 I am current working on a method to test how fast different fingers are. My plan is to use the information I have about where different fingers belong on the keyboard and test how fast they can move between those keys. I will use this information later to create a realistic simulation of how fast a keyboard layout is for typing a specific text. Here is an example of what a test would look like.
 
-![Keyboard Test](<images/Screenshot from 2023-10-20 22-43-21.png>)
+![Keyboard Test](<images/keyboard.png>)
 
 I will continue to work on this test until I have some strong data to help me create the ultimate keyboard layout.
 
@@ -18,3 +18,8 @@ After finishing the test, I realize that I approached it the wrong way. The test
 2. Judges reaction time instead of finger speed.
 
 In the coming weeks, I will rewrite the test to have the results better represent the finger speed of the user.
+
+### 2023/10/30
+I have begun working on the new test. I am happy that I am rewriting it, from my experience last time I am able to make it much more organized and less complex. The new test even begins with some instructions to help the user begin.
+
+![Instructions](<images/instructions.png>)
