@@ -5,8 +5,7 @@ pub struct InstructionsPlugin;
 
 impl Plugin for InstructionsPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .add_systems(OnEnter(AppState::Instructions), setup_ui)
+        app.add_systems(OnEnter(AppState::Instructions), setup_ui)
             .add_systems(Update, handle_next.run_if(in_state(AppState::Instructions)))
             .add_systems(OnExit(AppState::Instructions), destroy_ui);
     }

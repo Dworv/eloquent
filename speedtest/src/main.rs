@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use speedtest::{instructions::InstructionsPlugin, AppState, speedtest::TestPlugin};
+use speedtest::{instructions::InstructionsPlugin, speedtest::TestPlugin, AppState};
 
 fn main() {
     App::new()

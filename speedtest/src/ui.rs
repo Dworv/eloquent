@@ -16,7 +16,7 @@ pub const NORMAL_KEY_COLOR: BackgroundColor = BackgroundColor(Color::Rgba {
     alpha: 1.0,
 });
 
-pub const HAND_KEY_COLOR: BackgroundColor = BackgroundColor(Color::Rgba {
+pub const ACTIVE_KEY_COLOR: BackgroundColor = BackgroundColor(Color::Rgba {
     red: 0.2,
     green: 0.2,
     blue: 0.5,
@@ -56,22 +56,26 @@ pub fn row_container_ui(offset: Val) -> NodeBundle {
 }
 
 pub fn add_key(builder: &mut ChildBuilder, key: Key) {
+    let c = char::from(&key);
     builder
-        .spawn(NodeBundle {
-            style: Style {
-                height: Val::Percent(100.),
-                aspect_ratio: Some(1.),
-                align_items: AlignItems::Center,
-                justify_content: JustifyContent::Center,
+        .spawn((
+            NodeBundle {
+                style: Style {
+                    height: Val::Percent(100.),
+                    aspect_ratio: Some(1.),
+                    align_items: AlignItems::Center,
+                    justify_content: JustifyContent::Center,
+                    ..Default::default()
+                },
+                background_color: NORMAL_KEY_COLOR,
                 ..Default::default()
             },
-            background_color: NORMAL_KEY_COLOR,
-            ..Default::default()
-        })
+            key,
+        ))
         .with_children(|parent| {
             parent.spawn(
                 TextBundle::from_section(
-                    char::from(key),
+                    c,
                     TextStyle {
                         font_size: 40.0,
                         color: Color::rgb(0.9, 0.9, 0.9),

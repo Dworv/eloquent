@@ -3,6 +3,7 @@ pub mod speedtest;
 pub mod ui;
 
 use bevy::prelude::*;
+use rand::Rng;
 
 #[derive(Clone, Debug, Default, Eq, Hash, PartialEq, States)]
 pub enum AppState {
@@ -12,11 +13,11 @@ pub enum AppState {
     Results,
 }
 
-#[derive(Component)]
+#[derive(Component, Debug, PartialEq)]
 pub struct Key(KeyCode);
 
-impl From<Key> for char {
-    fn from(value: Key) -> Self {
+impl From<&Key> for char {
+    fn from(value: &Key) -> Self {
         use KeyCode::*;
         match value.0 {
             A => 'a',
@@ -49,7 +50,50 @@ impl From<Key> for char {
             Comma => ',',
             Period => '.',
             Slash => '/',
-            _ => panic!("invalid key")
+            _ => panic!("invalid key"),
+        }
+    }
+}
+
+pub enum Finger {
+    LeftPinky,
+    LeftRing,
+    LeftMiddle,
+    LeftIndex,
+    RightIndex,
+    RightMiddle,
+    RightRing,
+    RightPinky,
+}
+
+impl Finger {
+    pub fn random() -> Finger {
+        use Finger::*;
+        match rand::thread_rng().gen_range(0..8) {
+            0 => LeftPinky,
+            1 => LeftRing,
+            2 => LeftMiddle,
+            3 => LeftIndex,
+            4 => RightIndex,
+            5 => RightMiddle,
+            6 => RightRing,
+            7 => RightPinky,
+            _ => panic!("invalid finger"),
+        }
+    }
+
+    pub fn keys(&self) -> Vec<Key> {
+        use Finger::*;
+        use KeyCode::*;
+        match self {
+            LeftPinky => vec![Key(Q), Key(A), Key(Z)],
+            LeftRing => vec![Key(W), Key(S), Key(X)],
+            LeftMiddle => vec![Key(E), Key(D), Key(C)],
+            LeftIndex => vec![Key(R), Key(F), Key(V), Key(T), Key(G), Key(B)],
+            RightIndex => vec![Key(Y), Key(H), Key(N), Key(U), Key(J), Key(M)],
+            RightMiddle => vec![Key(I), Key(K), Key(Comma)],
+            RightRing => vec![Key(O), Key(L), Key(Period)],
+            RightPinky => vec![Key(P), Key(Semicolon), Key(Slash)],
         }
     }
 }
