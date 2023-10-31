@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use speedtest::{instructions::InstructionsPlugin, speedtest::TestPlugin, AppState};
+use speedtest::{instructions::InstructionsPlugin, speedtest::TestPlugin, AppState, results::ResultsPlugin};
 
 fn main() {
     App::new()
@@ -7,6 +7,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugins(InstructionsPlugin)
         .add_plugins(TestPlugin)
+        .add_plugins(ResultsPlugin)
         .add_systems(Startup, setup_camera)
         .run()
 }

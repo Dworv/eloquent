@@ -72,23 +72,23 @@ struct EndKey;
 struct TestsRemaining(pub i32);
 
 #[derive(Resource)]
-struct TestLogs(pub Vec<TestLog>);
+pub struct TestLogs(pub Vec<TestLog>);
 
 #[derive(Resource)]
 struct LiftTime(f64);
 
 #[derive(Debug, Serialize)]
-struct TestLog {
-    start: Key,
-    end: Key,
-    time: f64,
+pub struct TestLog {
+    pub start: Key,
+    pub end: Key,
+    pub time: f64,
 }
 
 #[derive(Event)]
 struct NextTest;
 
 fn init_res(mut commands: Commands) {
-    commands.insert_resource(TestsRemaining(50));
+    commands.insert_resource(TestsRemaining(3));
     commands.insert_resource(TestLogs(Vec::new()));
     commands.insert_resource(LiftTime(0.));
 }

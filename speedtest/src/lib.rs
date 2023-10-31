@@ -1,5 +1,6 @@
 pub mod instructions;
 pub mod speedtest;
+pub mod results;
 pub mod ui;
 
 use bevy::prelude::*;
