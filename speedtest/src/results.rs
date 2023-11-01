@@ -10,7 +10,7 @@ impl Plugin for ResultsPlugin {
     }
 }
 
-fn setup_ui(mut commands: Commands, mut logs: Res<TestLogs>) {
+fn setup_ui(mut commands: Commands, logs: Res<TestLogs>) {
     let mut fastest = std::f64::INFINITY;
     let mut sum = 0.;
     for log in &logs.0 {
