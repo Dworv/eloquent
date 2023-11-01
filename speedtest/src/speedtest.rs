@@ -1,4 +1,4 @@
-use std::{fs::OpenOptions, time::{Instant, SystemTime, UNIX_EPOCH}};
+use std::{fs::OpenOptions, time::{SystemTime, UNIX_EPOCH}};
 
 use bevy::prelude::*;
 use rand::{seq::SliceRandom, thread_rng};
@@ -88,7 +88,7 @@ pub struct TestLog {
 struct NextTest;
 
 fn init_res(mut commands: Commands) {
-    commands.insert_resource(TestsRemaining(3));
+    commands.insert_resource(TestsRemaining(50));
     commands.insert_resource(TestLogs(Vec::new()));
     commands.insert_resource(LiftTime(0.));
 }
