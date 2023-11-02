@@ -75,12 +75,12 @@ fn handle_next(
         match *stage {
             InstructionsStage::Title => {
                 *instructions =
-                    "To use the test, place and hold your appropriate finger on the red key."
+                    "To use the test, place and hold your appropriate finger on the green key."
                         .to_string();
                 *stage = InstructionsStage::P1;
             }
             InstructionsStage::P1 => {
-                *instructions = "A green key will appear. When you're ready, move the held finger to the new key as fast as possible.".to_string();
+                *instructions = "A red key will appear. When you're ready, move the held finger to the new key as fast as possible.".to_string();
                 *stage = InstructionsStage::P2;
             }
             InstructionsStage::P2 => {
