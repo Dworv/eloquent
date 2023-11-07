@@ -26,3 +26,13 @@ I have begun working on the new test. I am happy that I am rewriting it, from my
 
 ### 2023/11/1
 I FINISHED THE TEST :D. It works very well, and I have already used it on four people, which means that I have 200 samples. However, there are (3*2*6) + (6*5*2) = *96* possible movements that I am trying to measure, so it is imperative that I get much more data. I estimate that I will be able to get maybe 15 more people to do the test, which means I will have around 1000. I may end up just running a lot of tests on myself, as it will be a lot more efficient and I consider myself a pretty normal typer (unlike a lot of my accomplices) In terms of analysis, I will probably try to eliminate as many outliers as I can to normalize the data. 
+
+### 2023/11/7
+After finishing my testing, I have written my data analysis. This involved
+- Removing the outliers from the data
+- Taking averages for each finger
+- Taking averaages for each row
+Now that I have finished my research, I am ready to begin the ideating stage.
+
+## Ideating
+
