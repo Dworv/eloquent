@@ -32,7 +32,20 @@ After finishing my testing, I have written my data analysis. This involved
 - Removing the outliers from the data
 - Taking averages for each finger
 - Taking averaages for each row
-Now that I have finished my research, I am ready to begin the ideating stage.
+The results of my analysis are in `analysis/output.json`. Now that I have finished my research, I am ready to begin the ideating stage.
 
 ## Ideating
+
+### 2023/11/7
+I need to find a keyboard layout that is much better than the Qwerty layout. My plan is to iterate through a lot of different layouts and find which one is the best. I have made a list of things I need to do in order for this to work.
+1. Compile a large set of texts to test the keyboard layout on.
+   1. English
+   2. French
+   3. German
+   4. ... (more)
+2. Create a simulation that tests how fast a keyboard layout can type this dataset.
+3. Run this simulation on millions of keyboard layouts and find the fastest one.
+This ideating phase was pretty easy for me since I have already thought about how I want this project to work. Thus, this will be the only entry in this section
+
+## Prototyping
 
