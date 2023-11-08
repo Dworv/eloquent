@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{speedtest::TestLogs, AppState, ui::BACKGROUND_COLOR};
+use crate::{speedtest::TestLogs, ui::BACKGROUND_COLOR, AppState};
 
 pub struct ResultsPlugin;
 
@@ -20,32 +20,34 @@ fn setup_ui(mut commands: Commands, logs: Res<TestLogs>) {
         sum += log.time;
     }
     let avg = sum / logs.0.len() as f64;
-    commands.spawn(NodeBundle {
-        style: Style {
-            width: Val::Percent(100.),
-            height: Val::Percent(100.),
-            padding: UiRect::all(Val::Percent(15.)),
-            flex_direction: FlexDirection::Column,
-            align_items: AlignItems::Center,
-            justify_content: JustifyContent::Center,
-            ..Default::default()
-        },
-        background_color: BACKGROUND_COLOR,
-        ..default()
-    }).with_children(|parent| {
-        parent.spawn(TextBundle::from_section(
-            format!("Fastest: {:.2}ms", fastest * 1000.),
-            TextStyle {
-                font_size: 30.,
-                ..default()
+    commands
+        .spawn(NodeBundle {
+            style: Style {
+                width: Val::Percent(100.),
+                height: Val::Percent(100.),
+                padding: UiRect::all(Val::Percent(15.)),
+                flex_direction: FlexDirection::Column,
+                align_items: AlignItems::Center,
+                justify_content: JustifyContent::Center,
+                ..Default::default()
             },
-        ));
-        parent.spawn(TextBundle::from_section(
-            format!("\nAverage: {:.2}ms", avg * 1000.),
-            TextStyle {
-                font_size: 30.,
-                ..default()
-            },
-        ));
-    });
+            background_color: BACKGROUND_COLOR,
+            ..default()
+        })
+        .with_children(|parent| {
+            parent.spawn(TextBundle::from_section(
+                format!("Fastest: {:.2}ms", fastest * 1000.),
+                TextStyle {
+                    font_size: 30.,
+                    ..default()
+                },
+            ));
+            parent.spawn(TextBundle::from_section(
+                format!("\nAverage: {:.2}ms", avg * 1000.),
+                TextStyle {
+                    font_size: 30.,
+                    ..default()
+                },
+            ));
+        });
 }

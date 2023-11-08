@@ -1,6 +1,6 @@
 pub mod instructions;
-pub mod speedtest;
 pub mod results;
+pub mod speedtest;
 pub mod ui;
 
 use bevy::prelude::*;
@@ -60,7 +60,8 @@ impl From<&Key> for char {
 impl Serialize for Key {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
-        S: serde::Serializer {
+        S: serde::Serializer,
+    {
         serializer.serialize_char(char::from(self))
     }
 }

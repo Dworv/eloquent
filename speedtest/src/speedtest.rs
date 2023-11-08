@@ -1,4 +1,7 @@
-use std::{fs::OpenOptions, time::{SystemTime, UNIX_EPOCH}};
+use std::{
+    fs::OpenOptions,
+    time::{SystemTime, UNIX_EPOCH},
+};
 
 use bevy::prelude::*;
 use rand::{seq::SliceRandom, thread_rng};
@@ -18,7 +21,10 @@ impl Plugin for TestPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<NextTest>()
             .add_state::<TestState>()
-            .add_systems(OnEnter(AppState::Test), (setup_ui, activate_first_test, init_res))
+            .add_systems(
+                OnEnter(AppState::Test),
+                (setup_ui, activate_first_test, init_res),
+            )
             .add_systems(
                 Update,
                 (
@@ -34,7 +40,7 @@ impl Plugin for TestPlugin {
                 (
                     handle_start.run_if(in_state(TestState::Waiting)),
                     handle_lift.run_if(in_state(TestState::Started)),
-                    handle_finish.run_if(in_state(TestState::Moving))
+                    handle_finish.run_if(in_state(TestState::Moving)),
                 )
                     .run_if(in_state(AppState::Test)),
             )
@@ -157,7 +163,10 @@ fn setup_ui(mut commands: Commands) {
         });
 }
 
-fn color_start_key(mut start: Query<&mut BackgroundColor, With<StartKey>>, state: Res<State<TestState>>) {
+fn color_start_key(
+    mut start: Query<&mut BackgroundColor, With<StartKey>>,
+    state: Res<State<TestState>>,
+) {
     for mut color in &mut start {
         *color = match **state {
             TestState::Waiting | TestState::Started => START_KEY_COLOR,
@@ -282,7 +291,17 @@ fn remaining_check(
     log: Res<TestLogs>,
 ) {
     if tests_remaining.0 == 0 {
-        let file = OpenOptions::new().create(true).write(true).open(format!("speedtest-{}.json", SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs())).unwrap();
+        let file = OpenOptions::new()
+            .create(true)
+            .write(true)
+            .open(format!(
+                "speedtest-{}.json",
+                SystemTime::now()
+                    .duration_since(UNIX_EPOCH)
+                    .unwrap()
+                    .as_secs()
+            ))
+            .unwrap();
         serde_json::to_writer_pretty(file, &log.0).unwrap();
         *next_state = NextState(Some(AppState::Results));
     }
