@@ -2,6 +2,8 @@ use std::fs::File;
 
 use serde::Deserialize;
 
+use crate::Slot;
+
 #[derive(Deserialize, Debug)]
 pub struct Speeds {
     finger: [f64; 8],
@@ -14,5 +16,10 @@ impl Speeds {
         serde_json::from_reader(file).unwrap()
     }
 
-    pub fn time() {}
+    pub fn time(&self, start: Slot, end: Slot) -> f64 {
+        (
+            self.finger[start.finger().index() as usize] + 
+            self.row[start.row() as usize][end.row() as usize]
+        ) / 2.0
+    }
 }

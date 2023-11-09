@@ -37,6 +37,33 @@ pub enum Key {
 }
 
 #[derive(Clone, Copy, Debug)]
+pub enum Finger {
+    LeftPinky,
+    LeftRing,
+    LeftMiddle,
+    LeftIndex,
+    RightIndex,
+    RightMiddle,
+    RightRing,
+    RightPinky
+}
+
+impl Finger {
+    pub fn index(&self) -> u8 {
+        match self {
+            Finger::LeftPinky => 0,
+            Finger::LeftRing => 1,
+            Finger::LeftMiddle => 2,
+            Finger::LeftIndex => 3,
+            Finger::RightIndex => 4,
+            Finger::RightMiddle => 5,
+            Finger::RightRing => 6,
+            Finger::RightPinky => 7
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug)]
 pub struct Slot(u8);
 
 impl Slot {
@@ -52,6 +79,21 @@ impl Slot {
 
     pub fn col(&self) -> u8 {
         self.0 % 10
+    }
+
+    pub fn finger(&self) -> Finger {
+        match self.col() {
+            0 => Finger::LeftPinky,
+            1 => Finger::LeftRing,
+            2 => Finger::LeftMiddle,
+            3 | 4 => Finger::LeftIndex,
+            5 | 6 => Finger::RightIndex,
+            7 => Finger::RightMiddle,
+            8 => Finger::RightRing,
+            9 => Finger::RightPinky,
+            _ => panic!("Invalid column")
+        }
+    
     }
 }
 
