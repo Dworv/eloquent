@@ -2,7 +2,7 @@ mod speeds;
 
 pub use speeds::Speeds;
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Key {
     A,
     B,
@@ -33,7 +33,47 @@ pub enum Key {
     Semicolon,
     Comma,
     Period,
-    Slash
+    Slash,
+}
+
+impl TryFrom<char> for Key {
+    type Error = &'static str;
+    
+    fn try_from(c: char) -> Result<Key, &'static str> {
+        match c {
+            'a' => Ok(Key::A),
+            'b' => Ok(Key::B),
+            'c' => Ok(Key::C),
+            'd' => Ok(Key::D),
+            'e' => Ok(Key::E),
+            'f' => Ok(Key::F),
+            'g' => Ok(Key::G),
+            'h' => Ok(Key::H),
+            'i' => Ok(Key::I),
+            'j' => Ok(Key::J),
+            'k' => Ok(Key::K),
+            'l' => Ok(Key::L),
+            'm' => Ok(Key::M),
+            'n' => Ok(Key::N),
+            'o' => Ok(Key::O),
+            'p' => Ok(Key::P),
+            'q' => Ok(Key::Q),
+            'r' => Ok(Key::R),
+            's' => Ok(Key::S),
+            't' => Ok(Key::T),
+            'u' => Ok(Key::U),
+            'v' => Ok(Key::V),
+            'w' => Ok(Key::W),
+            'x' => Ok(Key::X),
+            'y' => Ok(Key::Y),
+            'z' => Ok(Key::Z),
+            ';' => Ok(Key::Semicolon),
+            ',' => Ok(Key::Comma),
+            '.' => Ok(Key::Period),
+            '/' => Ok(Key::Slash),
+            _ => Err("invalid"),
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -45,7 +85,7 @@ pub enum Finger {
     RightIndex,
     RightMiddle,
     RightRing,
-    RightPinky
+    RightPinky,
 }
 
 impl Finger {
@@ -58,12 +98,12 @@ impl Finger {
             Finger::RightIndex => 4,
             Finger::RightMiddle => 5,
             Finger::RightRing => 6,
-            Finger::RightPinky => 7
+            Finger::RightPinky => 7,
         }
     }
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Slot(u8);
 
 impl Slot {
@@ -91,15 +131,14 @@ impl Slot {
             7 => Finger::RightMiddle,
             8 => Finger::RightRing,
             9 => Finger::RightPinky,
-            _ => panic!("Invalid column")
+            _ => panic!("Invalid column"),
         }
-    
     }
 }
 
 #[derive(Clone, Debug)]
 pub struct Layout {
-    keys: [Key; 30]
+    keys: [Key; 30],
 }
 
 impl Layout {
@@ -109,5 +148,9 @@ impl Layout {
 
     pub fn key(&self, slot: Slot) -> Key {
         self.keys[slot.0 as usize]
+    }
+
+    pub fn slot(&self, key: Key) -> Slot {
+        Slot(self.keys.iter().position(|&k| k == key).unwrap() as u8)
     }
 }
