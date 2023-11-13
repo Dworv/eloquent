@@ -52,3 +52,11 @@ This ideating phase was pretty easy for me since I have already thought about ho
 #### 2023/11/10
 After a little bit of experimenting and scripting, I have finally collected a 3.2 million characters to be used as the speed test. My collection is a compilation of the top 100 wikipedia articles. I copied the list onto my computer, deconstructed it into a list of urls and then downloaded each on onto my computer for filtering. The `text.txt` file is now ready to be used in a simulation. This means that step 1 of my plan is now complete.
 - [x] Compile a large set of texts to test the keyboard layout on.
+
+#### 2023/11/12
+I moved back to Rust for this one. I am going to need to run this a lot of times, so many times that to be frank, it would be environmentally irresponsible to write it in Python. My simulation works exactly as planned, it keeps a state for each finger as it moves along the provided text and estimates how long it would take to type it. Here is an example output comparing Qwerty to Dvorak
+```
+time of qwerty: 103495.30881369725 seconds
+time of dvorak: 85596.81932878871 seconds
+```
+- [x] Create a simulation that tests how fast a keyboard layout can type this dataset.
