@@ -1,5 +1,7 @@
 mod speeds;
 
+use std::f64::NEG_INFINITY;
+
 pub use speeds::Speeds;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -152,5 +154,85 @@ impl Layout {
 
     pub fn slot(&self, key: Key) -> Slot {
         Slot(self.keys.iter().position(|&k| k == key).unwrap() as u8)
+    }
+}
+
+#[derive(Clone, Copy, Debug)]
+struct FingerState {
+    slot: Slot,
+    time: f64,
+}
+
+pub fn sim(layout: &Layout, speeds: &Speeds, text: &str) -> f64 {
+    let mut timer = 0f64;
+    let mut finger_states: [Option<FingerState>; 8] = [None; 8];
+
+    for c in text.chars() {
+        if c == ' ' {
+            timer += speeds.min_time();
+            continue;
+        }
+        if c == '\n' {
+            continue;
+        }
+        if let Ok(key) = Key::try_from(c) {
+            let slot = layout.slot(key);
+            let finger = slot.finger();
+            let FingerState {
+                slot: last_slot,
+                time: last_time
+            } = finger_states[finger.index() as usize].unwrap_or(FingerState {
+                slot: Slot::new(slot.row(), slot.row()),
+                time: NEG_INFINITY,
+            });
+
+            let move_speed = speeds.time(last_slot, slot);
+            let time_window = timer - last_time;
+
+            if time_window < move_speed - speeds.min_time() {
+                timer += move_speed - time_window;
+            } else {
+                timer += speeds.min_time();
+            }
+
+            finger_states[finger.index() as usize] = Some(FingerState {
+                slot,
+                time: timer,
+            });
+        }
+    }
+
+    timer
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{Layout, Key, Speeds};
+
+    #[test]
+    fn simple_test() {
+        use Key::*;
+        #[rustfmt::skip]
+        let layout = Layout::new([Q, W, E, R, T, Y, U, I, O, P, A, S, D, F, G, H, J, K, L, Semicolon, Z, X, C, V, B, N, M, Comma, Period, Slash]);
+        let speeds = Speeds::test_new([1.0; 8], [[1.0; 3]; 3]);
+        assert_eq!(super::sim(&layout, &speeds, "asdf"), 2.0);
+    }
+
+    #[test]
+    fn complex_test() {
+        use Key::*;
+        #[rustfmt::skip]
+        let layout = Layout::new([Q, W, E, R, T, Y, U, I, O, P, A, S, D, F, G, H, J, K, L, Semicolon, Z, X, C, V, B, N, M, Comma, Period, Slash]);
+        let speeds = Speeds::test_new([1.0; 8], [[1.0; 3]; 3]);
+        assert_eq!(super::sim(&layout, &speeds, "qaz"), 2.5);
+    }
+
+    #[test]
+    fn complex_test_2() {
+        use Key::*;
+        #[rustfmt::skip]
+        let layout = Layout::new([Q, W, E, R, T, Y, U, I, O, P, A, S, D, F, G, H, J, K, L, Semicolon, Z, X, C, V, B, N, M, Comma, Period, Slash]);
+        let speeds = Speeds::test_new([1.0; 8], [[1.0; 3]; 3]);
+        assert_eq!(super::sim(&layout, &speeds, "qsdz"), 2.0);
     }
 }
