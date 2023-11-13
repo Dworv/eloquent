@@ -1,6 +1,6 @@
 use std::{
     fs::File,
-    io::{BufRead, BufReader},
+    io::Read,
 };
 
 use sim::{Key, Layout, Slot, Speeds};
@@ -11,20 +11,11 @@ struct FingerState {
     time: f64,
 }
 
-fn main() {
-    let speeds = Speeds::init();
-    let buf = BufReader::new(File::open("text/text.txt").unwrap());
-
-    #[rustfmt::skip]
-    let layout = Layout::new([Key::Q, Key::W, Key::E, Key::R, Key::T, Key::Y, Key::U, Key::I, Key::O, Key::P, Key::A, Key::S, Key::D, Key::F, Key::G, Key::H, Key::J, Key::K, Key::L, Key::Semicolon, Key::Z, Key::X, Key::C, Key::V, Key::B, Key::N, Key::M, Key::Comma, Key::Period, Key::Slash]);
+fn sim(layout: &Layout, speeds: &Speeds, text: &str) -> f64 {
     let mut timer = 0f64;
     let mut finger_states: [Option<FingerState>; 8] = [None; 8];
 
-    for c in buf
-        .lines()
-        .flatten()
-        .flat_map(|s| s.chars().collect::<Vec<_>>())
-    {
+    for c in text.chars() {
         if c == ' ' {
             timer += speeds.space_time();
             continue;
@@ -50,8 +41,6 @@ fn main() {
                 timer += move_speed - time_window;
             }
 
-            dbg!(move_speed, time_window, timer);
-
             finger_states[finger.index() as usize] = Some(FingerState {
                 slot,
                 time: timer,
@@ -59,5 +48,19 @@ fn main() {
         }
     }
 
-    println!("time of qwerty: {} seconds", timer);
+    timer
+}
+
+fn main() {
+    let speeds = Speeds::init();
+    let mut txt = String::new();
+    File::open("text/text.txt").unwrap().read_to_string(&mut txt).unwrap();
+
+    #[rustfmt::skip]
+    use Key::*;
+    let qwerty = Layout::new([Q, W, E, R, T, Y, U, I, O, P, A, S, D, F, G, H, J, K, L, Semicolon, Z, X, C, V, B, N, M, Comma, Period, Slash]);
+    let dvorak = Layout::new([Slash, Comma, Period, P, Y, F, G, C, R, L, A, O, E, U, I, D, H, T, N, S, Semicolon, Q, J, K, X, B, M, W, V, Z]); 
+
+    println!("time of qwerty: {} seconds", sim(&qwerty, &speeds, &txt));
+    println!("time of dvorak: {} seconds", sim(&dvorak, &speeds, &txt));
 }
