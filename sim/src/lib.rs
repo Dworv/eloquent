@@ -38,6 +38,13 @@ pub enum Key {
     Slash,
 }
 
+impl Key {
+    pub fn all() -> [Key; 30] {
+        use Key::*;
+        [A, B, C, D, E, F, G, H, I, J, K, L, M, N, O,P, Q, R, S, T, U, V, W, X, Y, Z, Semicolon, Comma, Period, Slash]
+    }
+}
+
 impl TryFrom<char> for Key {
     type Error = &'static str;
     
