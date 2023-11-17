@@ -76,7 +76,7 @@ How will I do this? Glad you asked, faceless companion. I have a few ways of get
 
 #### 2023/11/17
 I used the `flamegraph` utitlity to generate this fantastic visualization of my program:
-![flamegraph](images/flamegraph.svg)
+![flamegraph](images/flamegraph1.svg)
 It shows that I need to work on 3 things:
 - I store my keyboard as a list of keys, which means that when I want to find where a key is, I have to search the whole thing. By storing the keys from a-z + chars, I will be able to go from O(n) to O(1) and eliminate this problem
 - When reading my text sample, my program spends a substantial amount of time translating `char`s into my `Key` enum. This is easily fixable by pre-processing my text file. This will again reduce the task from O(n) to O(1)
