@@ -66,3 +66,10 @@ Bam. Project is pretty much done. That was a joke. I did make a pretty fast keyb
 ![Histogram depicting distrubution of keyboard layouts](../plots/hist_layouts.png)
 As you can see, most keyboards were around 150,000 in score (lower is better). After getting this baseline, I wrote a script that creates some starter keyboards and then continues to improve them. I ended up with a score around 138,000. Pretty good. I'm going to keep working at this, my goal is to find a keyboard layout that gets a score of 130,000 or less, but I can't be sure one even exists. We'll see what happens.
 
+#### 2023/11/17
+Now that the first cycle of prototyping is done, I want to work on refining my methods and working towards this goal:
+1. Create a keyboard layout that gets a score of less than 135,000.
+How will I do this? Glad you asked, faceless companion. I have a few ways of getting closer to this goal that attack the problem from various angles.
+2. Profile my code. Right now, it is EXTREMELY SLOW. I NEED BLAZINGLY FAST CODE. Unfortunatly, I don't know exactly why. So, I am going to benchmark it and find out why it's so slow.
+3. Optimize the simulator that scores layouts. I already have a testing suite that ensures my simulator behaves correctly, but I want to expand it and then work on optimizing it. I already know this is a big bottleneck for my layout generation, but my profiling should help me understand how much time I should spend on this.
+4. Improve my methods. Right now, my test is very linear and quite frankly, dumb. Not dumb as in I designed it badly, dumb as in  unsophisticated. I will do some more research and then rewrite my generator/trainer to hopefully become more efficient.
