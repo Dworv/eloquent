@@ -73,3 +73,11 @@ How will I do this? Glad you asked, faceless companion. I have a few ways of get
 2. Profile my code. Right now, it is EXTREMELY SLOW. I NEED BLAZINGLY FAST CODE. Unfortunatly, I don't know exactly why. So, I am going to benchmark it and find out why it's so slow.
 3. Optimize the simulator that scores layouts. I already have a testing suite that ensures my simulator behaves correctly, but I want to expand it and then work on optimizing it. I already know this is a big bottleneck for my layout generation, but my profiling should help me understand how much time I should spend on this.
 4. Improve my methods. Right now, my test is very linear and quite frankly, dumb. Not dumb as in I designed it badly, dumb as in  unsophisticated. I will do some more research and then rewrite my generator/trainer to hopefully become more efficient.
+
+#### 2023/11/17
+I used the `flamegraph` utitlity to generate this fantastic visualization of my program:
+![flamegraph](images/flamegraph.svg)
+It shows that I need to work on 3 things:
+- I store my keyboard as a list of keys, which means that when I want to find where a key is, I have to search the whole thing. By storing the keys from a-z + chars, I will be able to go from O(n) to O(1) and eliminate this problem
+- When reading my text sample, my program spends a substantial amount of time translating `char`s into my `Key` enum. This is easily fixable by pre-processing my text file. This will again reduce the task from O(n) to O(1)
+- For some reason, my program is very slow at getting the travel time between one key and another. This should be easily fixed by storing a matrix of travel times so I don't repeat calculations. O(n) to O(1) seems like a very common theme here, I like it :D.
