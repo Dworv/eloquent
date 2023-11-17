@@ -60,3 +60,9 @@ time of qwerty: 103495.30881369725 seconds
 time of dvorak: 85596.81932878871 seconds
 ```
 - [x] Create a simulation that tests how fast a keyboard layout can type this dataset.
+
+#### 2023/11/16
+Bam. Project is pretty much done. That was a joke. I did make a pretty fast keyboard layout though. On the plane ride to Toronto I wrote some code to plot how fast a bunch of keyboard layouts were. Here is the graph:
+![Histogram depicting distrubution of keyboard layouts](../plots/hist_layouts.png)
+As you can see, most keyboards were around 150,000 in score (lower is better). After getting this baseline, I wrote a script that creates some starter keyboards and then continues to improve them. I ended up with a score around 138,000. Pretty good. I'm going to keep working at this, my goal is to find a keyboard layout that gets a score of 130,000 or less, but I can't be sure one even exists. We'll see what happens.
+
