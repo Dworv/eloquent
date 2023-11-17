@@ -182,8 +182,8 @@ pub fn sim(layout: &Layout, speeds: &Speeds, text: &str) -> f64 {
         if c == '\n' {
             continue;
         }
-        if let Ok(key) = Key::try_from(c) {
-            let slot = layout.slot(key);
+        if let Ok(key) = Key::try_from(c) { // OPTIMIZE
+            let slot = layout.slot(key); // OPTIMIZE
             let finger = slot.finger();
             let FingerState {
                 slot: last_slot,
@@ -193,7 +193,7 @@ pub fn sim(layout: &Layout, speeds: &Speeds, text: &str) -> f64 {
                 time: NEG_INFINITY,
             });
 
-            let move_speed = speeds.time(last_slot, slot);
+            let move_speed = speeds.time(last_slot, slot); // OPTIMIZE
             let time_window = timer - last_time;
 
             if time_window < move_speed - speeds.min_time() {
