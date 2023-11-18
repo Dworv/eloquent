@@ -243,7 +243,7 @@ pub fn sim(layout: &Layout, speeds: &Speeds, text: &Vec<Option<Key>>) -> f64 {
                 time: NEG_INFINITY,
             });
 
-            let move_speed = speeds.time(last_slot, slot); // OPTIMIZE
+            let move_speed = speeds.time(last_slot, slot);
             let time_window = timer - last_time;
 
             if time_window < move_speed - speeds.min_time() {
