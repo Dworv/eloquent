@@ -88,4 +88,5 @@ The average time `sim` takes to run is currently `67.4ms`
 1. Refactor before optimization: `-12%` time -> `59.4ms`!
 2. Reformat layout storage: `-14%` time -> `51.1ms`!
 3. Preprocess text input: `-13%` time -> `44.3ms`!
-4. 
+4. HOLY COW! Precalculating the speeds: `-55%` time -> `20.0ms`!!!!!
+Great success! Truly inspiring work by yours truly. Thanks to `flamegraph-rs` and `criterion`, I was able to make my simulation run a WHOPPING `108%` FASTER.
