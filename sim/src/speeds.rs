@@ -2,7 +2,7 @@ use std::{fs::File, f64::INFINITY};
 
 use serde::Deserialize;
 
-use crate::Slot;
+use crate::{finger, row};
 
 fn inf() -> f64 {
     INFINITY
@@ -18,7 +18,8 @@ pub struct Speeds {
 
 impl Speeds {
     pub fn init() -> Speeds {
-        let file = File::open("speeds.json").unwrap_or(File::open("analysis/speeds.json").unwrap());
+        let file = File::open("speeds.json")
+            .unwrap_or(File::open("analysis/speeds.json").unwrap_or(File::open("../analysis/speeds.json").unwrap()));
         let mut speeds: Speeds = serde_json::from_reader(file).unwrap();
         speeds.set_min();
         speeds
@@ -38,12 +39,12 @@ impl Speeds {
         }
     }
 
-    pub fn time(&self, start: Slot, end: Slot) -> f64 {
+    pub fn time(&self, start: u8, end: u8) -> f64 {
         if start == end {
             self.min_time()
         } else {
-            (self.finger[start.finger().index() as usize]
-            + self.row[start.row() as usize][end.row() as usize])
+            (self.finger[finger(start) as usize]
+            + self.row[row(start) as usize][row(end) as usize])
             / 2.0
         }
     }

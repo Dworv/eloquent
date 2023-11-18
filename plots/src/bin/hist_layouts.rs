@@ -13,10 +13,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let speeds = Speeds::init();
     let mut txt = String::new();
     File::open("text/text.txt")?.read_to_string(&mut txt)?;
+    let txt = sim::preprocess_str(&txt);
 
     for i in 0..1000 {
         keys.shuffle(&mut rng);
-        let layout = Layout::new(keys);
+        let layout = Layout::from_order(keys);
         data.push(sim(&layout, &speeds, &txt) as u32);
         println!("sim #{}", i);
         if i%20 == 5 {

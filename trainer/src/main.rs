@@ -2,7 +2,7 @@ use std::{fs::File, io::Read, f64::INFINITY};
 
 use rand::prelude::*;
 use rayon::prelude::*;
-use sim::{Key, Layout, sim, Speeds};
+use sim::{Key, Layout, sim, Speeds, preprocess_str};
 
 fn main() {
     let mut rng = thread_rng();
@@ -10,6 +10,7 @@ fn main() {
     let speeds = Speeds::init();
     let mut text = String::new();
     File::open("text/text.txt").unwrap().read_to_string(&mut text).unwrap();
+    let text = preprocess_str(&text);
 
     for _ in 0..10 {
         let mut keys = Key::all();
@@ -40,9 +41,9 @@ fn main() {
     }
 }
 
-fn filter_candidates(candidates: Vec<[Key; 30]>, speeds: &Speeds, text: &String) -> Vec<[Key; 30]> {
+fn filter_candidates(candidates: Vec<[Key; 30]>, speeds: &Speeds, text: &Vec<Option<Key>>) -> Vec<[Key; 30]> {
     let candidates = candidates.into_par_iter().map(|candidate| {
-        let speed = sim(&Layout::new(candidate), speeds, text);
+        let speed = sim(&Layout::from_order(candidate), speeds, text);
         (candidate, speed)
     }).collect::<Vec<_>>();
 
