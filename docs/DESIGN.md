@@ -81,3 +81,11 @@ It shows that I need to work on 3 things:
 - I store my keyboard as a list of keys, which means that when I want to find where a key is, I have to search the whole thing. By storing the keys from a-z + chars, I will be able to go from O(n) to O(1) and eliminate this problem
 - When reading my text sample, my program spends a substantial amount of time translating `char`s into my `Key` enum. This is easily fixable by pre-processing my text file. This will again reduce the task from O(n) to O(1)
 - For some reason, my program is very slow at getting the travel time between one key and another. This should be easily fixed by storing a matrix of travel times so I don't repeat calculations. O(n) to O(1) seems like a very common theme here, I like it :D.
+
+#### 2023/11/18
+Today is optimizing day! Here are the results of my optimization.
+The average time `sim` takes to run is currently `67.4ms`
+1. Refactor before optimization: `-12%` time -> `59.4ms`!
+2. Reformat layout storage: `-14%` time -> `51.1ms`!
+3. Preprocess text input: `-13%` time -> `44.3ms`!
+4. 
