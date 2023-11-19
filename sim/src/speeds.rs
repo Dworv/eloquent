@@ -18,8 +18,8 @@ struct RawSpeeds {
 
 impl RawSpeeds {
     pub fn init() -> RawSpeeds {
-        let file = File::open("speeds.json")
-            .unwrap_or(File::open("analysis/speeds.json").unwrap_or(File::open("../analysis/speeds.json").unwrap()));
+        let file = File::open("analysis/speeds.json")
+            .unwrap_or_else(|_| File::open("../analysis/speeds.json").unwrap());
         let mut speeds: RawSpeeds = serde_json::from_reader(file).unwrap();
         speeds.set_min();
         speeds
@@ -39,7 +39,7 @@ impl RawSpeeds {
         }
     }
 
-    pub fn time(&self, start: u8, end: u8) -> f64 {
+    fn time(&self, start: u8, end: u8) -> f64 {
         if start == end {
             self.min_time()
         } else {
@@ -49,7 +49,7 @@ impl RawSpeeds {
         }
     }
 
-    pub fn min_time(&self) -> f64 {
+    fn min_time(&self) -> f64 {
         self.min / 2.
     }
 }
