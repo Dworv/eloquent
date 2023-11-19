@@ -82,6 +82,8 @@ It shows that I need to work on 3 things:
 - When reading my text sample, my program spends a substantial amount of time translating `char`s into my `Key` enum. This is easily fixable by pre-processing my text file. This will again reduce the task from O(n) to O(1)
 - For some reason, my program is very slow at getting the travel time between one key and another. This should be easily fixed by storing a matrix of travel times so I don't repeat calculations. O(n) to O(1) seems like a very common theme here, I like it :D.
 
+- [x] Profile my code
+
 #### 2023/11/18
 Today is optimizing day! Here are the results of my optimization.
 The average time `sim` takes to run is currently `67.4ms`
@@ -90,3 +92,5 @@ The average time `sim` takes to run is currently `67.4ms`
 3. Preprocess text input: `-13%` time -> `44.3ms`!
 4. HOLY COW! Precalculating the speeds: `-55%` time -> `20.0ms`!!!!!
 Great success! Truly inspiring work by yours truly. Thanks to `flamegraph-rs` and `criterion`, I was able to make my simulation run a WHOPPING `108%` FASTER.
+
+- [x] Optimize my code
