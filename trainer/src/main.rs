@@ -26,12 +26,12 @@ fn anneal() -> ([Key; 30], f64) {
         candidates.push(keys);
     }
 
-    for i in 1..=100 {
+    for _ in 1..=100 {
         for og in 0..10 {
-            for _ in 0..10 {
+            for _ in 0..20 {
                 let old = &candidates[og];
                 let mut new = old.clone();
-                for _ in 0..rng.gen_range(0..5) {
+                for _ in 0..rng.gen_range(1..=5) {
                     let start = rng.gen_range(0..30);
                     let mut end = rng.gen_range(0..29);
 
@@ -74,8 +74,6 @@ fn filter_candidates(candidates: Vec<[Key; 30]>, speeds: &Speeds, text: &Vec<Opt
             *bar = (candidate, speed);
         }
     }
-
-    let fastest = top.iter().reduce(|x, y| if x.1 < y.1 { x } else { y }).unwrap();
 
     top.into_iter().map(|(x, _)| x).collect()
 }
