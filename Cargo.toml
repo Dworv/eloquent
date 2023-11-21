@@ -1,5 +1,5 @@
 [workspace]
-members = ["plots", "speedtest", "sim", "trainer"]
+members = ["plots", "speedtest", "sim", "trainer", "sa-gen"]
 resolver = "2"
 
 # Enable only a small amount of optimization in debug mode
