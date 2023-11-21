@@ -1,10 +1,10 @@
 mod speeds;
 
-use std::f64::NEG_INFINITY;
+use std::{f64::NEG_INFINITY, fmt::Debug};
 
 pub use speeds::Speeds;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum Key {
     A,
     B,
@@ -113,6 +113,44 @@ impl Key {
             29 => Key::Slash,
             _ => panic!("Invalid key id"),
         }
+    }
+}
+
+impl Debug for Key {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let c = match self {
+            Key::A => 'a',
+            Key::B => 'b',
+            Key::C => 'c',
+            Key::D => 'd',
+            Key::E => 'e',
+            Key::F => 'f',
+            Key::G => 'g',
+            Key::H => 'h',
+            Key::I => 'i',
+            Key::J => 'j',
+            Key::K => 'k',
+            Key::L => 'l',
+            Key::M => 'm',
+            Key::N => 'n',
+            Key::O => 'o',
+            Key::P => 'p',
+            Key::Q => 'q',
+            Key::R => 'r',
+            Key::S => 's',
+            Key::T => 't',
+            Key::U => 'u',
+            Key::V => 'v',
+            Key::W => 'w',
+            Key::X => 'x',
+            Key::Y => 'y',
+            Key::Z => 'z',
+            Key::Semicolon => ';',
+            Key::Comma => ',',
+            Key::Period => '.',
+            Key::Slash => '/',
+        };
+        write!(f, "{}", c)
     }
 }
 
