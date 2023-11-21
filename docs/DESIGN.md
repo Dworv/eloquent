@@ -94,3 +94,6 @@ The average time `sim` takes to run is currently `67.4ms`
 Great success! Truly inspiring work by yours truly. Thanks to `flamegraph-rs` and `criterion`, I was able to make my simulation run a WHOPPING `108%` FASTER.
 
 - [x] Optimize my code
+
+#### 2023/11/21
+Now that my simulation is :fire: *BLAZINGLY FAST* :fire:, it's time to put it to work :flex: :flex: :flex:. Now that I've reached my emoji quota put into place by my completely sane and very normal deskmate, lets talk about simulated annealing. I need to find the optimal keyboard layout, and it turns out that finding it will work a lot like finding the minimum value in a line, except instead of having 1 dimension, it has 30. I can't realisticially check the 265252859812191058636308480000000 keyboard layouts to find the fastest one, this would take 33644452030972990694610 years or just under 2.5 trillion times the age of our universe by using the combined computing power of my PC and my laptop. INSTEAD, I will find the keyboard layout that is hopefully very close to the fastest keyboard layout using **SIMULATED ANNEALING** (for dramatic effect imagine this being yelled in a parking lot with very strong echo). I will explain what this is after I finish reading the wikipedia article about it, but I'm pretty confident that it's what I'm looking for.
