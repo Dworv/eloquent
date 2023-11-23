@@ -17,26 +17,26 @@ lazy_static!{
 
 struct KeyboardProblem;
 
-impl Metaheuristics<[Key; 30]> for KeyboardProblem {
-    fn clone_candidate(&mut self, candidate: &[Key; 30]) -> [Key; 30] {
+impl Metaheuristics<[Key; 20]> for KeyboardProblem {
+    fn clone_candidate(&mut self, candidate: &[Key; 20]) -> [Key; 20] {
         candidate.clone()
     }
 
-    fn generate_candidate(&mut self) -> [Key; 30] {
-        let mut keys = Key::all();
+    fn generate_candidate(&mut self) -> [Key; 20] {
+        let mut keys = Key::all20();
         keys.shuffle(&mut thread_rng());
         keys
     }
 
-    fn rank_candidate(&mut self, candidate: &[Key; 30]) -> f64 {
-        1./sim(&Layout::from_order(*candidate), &SPEEDS, &TEXT)
+    fn rank_candidate(&mut self, candidate: &[Key; 20]) -> f64 {
+        1./sim(&Layout::from_20(*candidate), &SPEEDS, &TEXT)
     }
 
-    fn tweak_candidate(&mut self, candidate: &[Key; 30]) -> [Key; 30] {
+    fn tweak_candidate(&mut self, candidate: &[Key; 20]) -> [Key; 20] {
         let mut new = candidate.clone();
         let mut rng = thread_rng();
-        let start = rng.gen_range(0..30);
-        let mut end = rng.gen_range(0..29);
+        let start = rng.gen_range(0..20);
+        let mut end = rng.gen_range(0..19);
 
         if end >= start {
             end += 1;
@@ -48,6 +48,6 @@ impl Metaheuristics<[Key; 30]> for KeyboardProblem {
 }
 
 fn main() {
-    let solution = simulated_annealing::solve(&mut KeyboardProblem, Duration::minutes(10));
-    println!("time: {:.1} solution {:?}", sim(&Layout::from_order(solution), &SPEEDS, &TEXT), solution)
+    let solution = simulated_annealing::solve(&mut KeyboardProblem, Duration::seconds(3));
+    println!("time: {:.1} solution {:?}", sim(&Layout::from_20(solution), &SPEEDS, &TEXT), &Layout::from_20(solution).to_keys())
 }

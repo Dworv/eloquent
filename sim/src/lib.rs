@@ -44,6 +44,11 @@ impl Key {
         [A, B, C, D, E, F, G, H, I, J, K, L, M, N, O,P, Q, R, S, T, U, V, W, X, Y, Z, Semicolon, Comma, Period, Slash]
     }
 
+    pub fn all20() -> [Key; 20] {
+        use Key::*;
+        [Q, W, E, R, T, Y, U, I, O, P, D, F, G, H, J, K, L, B, N, M]
+    }
+
     pub fn to_id(&self) -> u8 {
         match self {
             Key::A => 0,
@@ -234,12 +239,37 @@ impl Layout {
         Layout::new(slots)
     }
 
+    pub fn from_20(keys: [Key; 20]) -> Layout {
+        let mut slots = [0; 30];
+        for (mut i, key) in keys.iter().enumerate() {
+            for k in [10, 11, 19, 20, 21, 22, 23, 27, 28, 29] {
+                if i >= k {
+                    i += 1;
+                }
+            }
+            slots[key.to_id() as usize] = i as u8;
+        }
+        use Key::*;
+        for (key, i) in [(A, 10), (S, 11), (Semicolon, 19), (Z, 20), (X, 21), (C, 22), (V, 23), (Comma, 27), (Period, 28), (Slash, 29)] {
+            slots[key.to_id() as usize] = i as u8;
+        }
+        Layout::new(slots)
+    }
+
     pub fn slot(&self, key: Key) -> u8 {
         self.slots[key.to_id() as usize]
     }
 
     pub fn key(&self, slot: u8) -> Key {
         Key::from_id(self.slots.iter().position(|&s| s == slot).unwrap() as u8)
+    }
+
+    pub fn to_keys(&self) -> [Key; 30] {
+        let mut keys = [Key::A; 30];
+        for slot in 0..30 {
+            keys[slot as usize] = self.key(slot);
+        }
+        keys
     }
 }
 
