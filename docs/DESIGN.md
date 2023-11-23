@@ -97,3 +97,17 @@ Great success! Truly inspiring work by yours truly. Thanks to `flamegraph-rs` an
 
 #### 2023/11/21
 Now that my simulation is :fire: *BLAZINGLY FAST* :fire:, it's time to put it to work :flex: :flex: :flex:. Now that I've reached my emoji quota put into place by my completely sane and very normal deskmate, lets talk about simulated annealing. I need to find the optimal keyboard layout, and it turns out that finding it will work a lot like finding the minimum value in a line, except instead of having 1 dimension, it has 30. I can't realisticially check the 265252859812191058636308480000000 keyboard layouts to find the fastest one, this would take 33644452030972990694610 years or just under 2.5 trillion times the age of our universe by using the combined computing power of my PC and my laptop. INSTEAD, I will find the keyboard layout that is hopefully very close to the fastest keyboard layout using **SIMULATED ANNEALING** (for dramatic effect imagine this being yelled in a parking lot with very strong echo). I will explain what this is after I finish reading the wikipedia article about it, but I'm pretty confident that it's what I'm looking for.
+
+#### 2023/11/23
+I finished setting up annealing and I found a very fast keyboard: 
+
+k x , / ; v g j b z 
+ t l i a o c p y n s
+  m r u q . w f e h d
+
+This was pretty easily achieved by using the `metaheuristics` crate for my `sim` function. 
+However, before I wrap up the project, I'm going to do some final modifactions. 
+1. I'm going to lock some keys in place from querty. Specifically, I'm going to keep the common command keys `a, s, z, x, c, v` in their original positions, as well as `;, ,, ., /` to keep the keyboard looking clean.
+2. I'm going to slightly rework my `sim` function to be a better representation of how successful I've been and give my annealer more reward for succeeding. Currently, it takes just as long for my simulation to click the same key twice as it does to move a finger from one location to the other.
+3. I'm going to set up my metaheuristics to run for a long time. It only uses one core, which means that its a bit slower but it also means that I can easily multithread it or just run it in the background on my PC. I'll probably end up running 4 at once for a few days and find one last keyboard layout before I wrap the project up.
+4. 
