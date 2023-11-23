@@ -314,10 +314,8 @@ pub fn sim(layout: &Layout, speeds: &Speeds, text: &Vec<Option<Key>>) -> f64 {
             let move_speed = speeds.time(last_slot, slot);
             let time_window = timer - last_time;
 
-            if time_window < move_speed - speeds.min_time() {
+            if time_window < move_speed {
                 timer += move_speed - time_window;
-            } else {
-                timer += speeds.min_time();
             }
 
             finger_states[finger as usize] = Some(FingerState {
@@ -342,7 +340,7 @@ mod tests {
         #[rustfmt::skip]
         let layout = Layout::from_order([Q, W, E, R, T, Y, U, I, O, P, A, S, D, F, G, H, J, K, L, Semicolon, Z, X, C, V, B, N, M, Comma, Period, Slash]);
         let speeds = Speeds::test_new([1.0; 8], [[1.0; 3]; 3]);
-        assert_eq!(super::sim(&layout, &speeds, &preprocess_str("asdf")), 2.0);
+        assert_eq!(super::sim(&layout, &speeds, &preprocess_str("asdf")), 0.);
     }
 
     #[test]
@@ -351,7 +349,7 @@ mod tests {
         #[rustfmt::skip]
         let layout = Layout::from_order([Q, W, E, R, T, Y, U, I, O, P, A, S, D, F, G, H, J, K, L, Semicolon, Z, X, C, V, B, N, M, Comma, Period, Slash]);
         let speeds = Speeds::test_new([1.0; 8], [[1.0; 3]; 3]);
-        assert_eq!(super::sim(&layout, &speeds, &preprocess_str("qaz")), 2.5);
+        assert_eq!(super::sim(&layout, &speeds, &preprocess_str("qaz")), 2.0);
     }
 
     #[test]
@@ -360,7 +358,7 @@ mod tests {
         #[rustfmt::skip]
         let layout = Layout::from_order([Q, W, E, R, T, Y, U, I, O, P, A, S, D, F, G, H, J, K, L, Semicolon, Z, X, C, V, B, N, M, Comma, Period, Slash]);
         let speeds = Speeds::test_new([1.0; 8], [[1.0; 3]; 3]);
-        assert_eq!(super::sim(&layout, &speeds, &preprocess_str("asdf")), 2.0);
+        assert_eq!(super::sim(&layout, &speeds, &preprocess_str("asdf")), 0.0);
     }
 
     #[test]
@@ -368,6 +366,7 @@ mod tests {
         let layout = Layout::from_order(Key::all());
         let speeds = Speeds::test_new([0.5; 8], [[0.1, 0.2, 0.3]; 3]);
         let res = super::sim(&layout, &speeds, &preprocess_str("asdfalksdjflk;sdfsdfioqwpufjdsakvnl;ec fn ifg ifls  ukfcl gcimskjlfin\nasdfasdfalksdjflk;sdfsdfioqwpufjdsakvnl;ecfnifgiflsukfclgcimskjlfinasdfasdfalksdjflk ;sdfsdfioqw pufjdsakvnl;ecfnifgiflsukfclgcimskjlfinasdf"));
-        assert!(res > 20.59 && res < 20.61);
+        dbg!(res);
+        assert!(res > 16.7 && res < 16.71);
     }
 }

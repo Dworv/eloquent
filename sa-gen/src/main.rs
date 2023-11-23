@@ -48,6 +48,7 @@ impl Metaheuristics<[Key; 20]> for KeyboardProblem {
 }
 
 fn main() {
-    let solution = simulated_annealing::solve(&mut KeyboardProblem, Duration::seconds(3));
-    println!("time: {:.1} solution {:?}", sim(&Layout::from_20(solution), &SPEEDS, &TEXT), &Layout::from_20(solution).to_keys())
+    println!("efficiency of querty:   {:.1}", sim(&Layout::from_20(Key::all20()), &SPEEDS, &TEXT));
+    let solution = simulated_annealing::solve(&mut KeyboardProblem, Duration::seconds(60));
+    println!("efficiency of eloquent: {:.1} solution {:?}", sim(&Layout::from_20(solution), &SPEEDS, &TEXT), &Layout::from_20(solution).to_keys())
 }
