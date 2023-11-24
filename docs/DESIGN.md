@@ -110,4 +110,6 @@ However, before I wrap up the project, I'm going to do some final modifactions.
 1. I'm going to lock some keys in place from querty. Specifically, I'm going to keep the common command keys `a, s, z, x, c, v` in their original positions, as well as `;, ,, ., /` to keep the keyboard looking clean.
 2. I'm going to slightly rework my `sim` function to be a better representation of how successful I've been and give my annealer more reward for succeeding. Currently, it takes just as long for my simulation to click the same key twice as it does to move a finger from one location to the other.
 3. I'm going to set up my metaheuristics to run for a long time. It only uses one core, which means that its a bit slower but it also means that I can easily multithread it or just run it in the background on my PC. I'll probably end up running 4 at once for a few days and find one last keyboard layout before I wrap the project up.
-4. 
+
+#### 2023/11/24
+I finished the first two of my final goals. Locking the keys in place was surprisingly easy, I just stored the variable 20 keys seperately and shuffled them alone. Reworking my sim function was also easy. Querty now has an efficiency loss of `96980.6` while a keyboard that took a minute to optimize has an efficiency loss of `77024.5`. Tonight, I will begin running my final simulation :D. If all goes well my final entry will be tomorrow.
