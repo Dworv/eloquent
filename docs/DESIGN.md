@@ -113,3 +113,6 @@ However, before I wrap up the project, I'm going to do some final modifactions.
 
 #### 2023/11/24
 I finished the first two of my final goals. Locking the keys in place was surprisingly easy, I just stored the variable 20 keys seperately and shuffled them alone. Reworking my sim function was also easy. Querty now has an efficiency loss of `96980.6` while a keyboard that took a minute to optimize has an efficiency loss of `77024.5`. Tonight, I will begin running my final simulation :D. If all goes well my final entry will be tomorrow.
+
+## Making
+I have started the program, it will run for the next 24 hours and find me the ultimate keyboard layout! See you on the other side...
