@@ -115,4 +115,20 @@ However, before I wrap up the project, I'm going to do some final modifactions.
 I finished the first two of my final goals. Locking the keys in place was surprisingly easy, I just stored the variable 20 keys seperately and shuffled them alone. Reworking my sim function was also easy. Querty now has an efficiency loss of `96980.6` while a keyboard that took a minute to optimize has an efficiency loss of `77024.5`. Tonight, I will begin running my final simulation :D. If all goes well my final entry will be tomorrow.
 
 ## Making
+
+#### 2023/11/25
 I have started the program, it will run for the next 24 hours and find me the ultimate keyboard layout! See you on the other side...
+
+## Showing
+
+#### 2023/11/26
+BEHOLD: 
+o d g m f n h u l e 
+ a s t b p y k i r ; 
+  z x c v w q j , . /
+The eloquent keyboard layout in all of its glory.
+My layout is 26% more efficient than qwerty. Here is a photo of it in real life:
+[images/final.jpg](Final layout)
+I'm pretty happy with how this project went. I usually don't find projects that I can stay engaged in for more than a month, so this was a nice exception. If I could do it again, I don't think that there's anything I would change. 
+As for my typing, I don't plan on switching to this layout. I already type at 130 WPM, thats fast enough for me :D
+Onto the next project!
